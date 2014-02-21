@@ -1,5 +1,4 @@
 import java.awt.event.*;
-import processing.xml.*;
 import processing.opengl.*;
 import geomerative.*;
 
@@ -55,7 +54,6 @@ void setup()
 
 
 
-    controllIO = ControllIO.getInstance(this);
     setupGamepad();
 
     addMouseWheelListener(new MouseWheelListener() { 
@@ -798,9 +796,6 @@ public void btnMoveDownRight(int theValue) {
 }
 
 
-
-
-
 void printDryRunStats()
 {
     println( "pen up distance = " + _motorController._statsPenUpDistance + " mm");
@@ -810,13 +805,10 @@ void printDryRunStats()
     println( "total duration = " + ( _motorController._statsPenUpDuration + _motorController._statsPenDownDuration ) / 60000.0 + " minutes");    
 }
 
-///////////////////////////
-// Setup of the gamepad interface
-////////////////////////////////////
-
 
 void setupGamepad()
 {
+  /*
     joypad = controllIO.getDevice("SmartJoy PLUS Adapter");
     joypad.printButtons();
 
@@ -827,6 +819,7 @@ void setupGamepad()
     //joypad.plug(this, "onGamepadDpadMovement", ControllIO.WHILE_PRESS, 12);
     //joypad.plug(this, "onGamepadDpadPress", ControllIO.ON_PRESS, 12);
     joypad.plug(this, "onGamepadDpadRelease", ControllIO.ON_RELEASE, 12);
+    */
 }     
 
 void onGamepadL1ButtonPress() {
@@ -847,6 +840,7 @@ void onGamepadDpadRelease(final float x, final float y) {
     onGamepadDpadMovement( x, y );
 }
 void onGamepadDpadMovement(final float x, final float y) {
+  /*
     if ( x<0 && y<0 ) _motorController.setupMoveMotors( -1, 0 );
     else if ( x==0 && y<0 ) _motorController.setupMoveMotors( -1, -1 );
     else if ( x>0 && y<0 ) _motorController.setupMoveMotors( 0, -1 );
@@ -857,41 +851,6 @@ void onGamepadDpadMovement(final float x, final float y) {
     else if ( x<0 && y>0 ) _motorController.setupMoveMotors( 0, 1 );
     else if ( x==0 && y>0 ) _motorController.setupMoveMotors( 1, 1 );
     else if ( x>0 && y>0 ) _motorController.setupMoveMotors( 1, 0 );
+    */
 }
-
-/*
-void keyPressed()
- {
- if (key == CODED) 
- {
- switch ( keyCode )
- {
- case UP:
- btnMoveUp(0); 
- break;
- case DOWN:
- btnMoveDown(0); 
- break;
- case LEFT:
- btnMoveLeft(0); 
- break;
- case RIGHT:
- btnMoveRight(0); 
- break;
- case KeyEvent.VK_PAGE_UP:
- btnMoveUpRight(0); 
- break;
- case KeyEvent.VK_PAGE_DOWN:
- btnMoveDownRight(0); 
- break;
- case KeyEvent.VK_HOME:
- btnMoveUpLeft(0); 
- break;
- case KeyEvent.VK_END:
- btnMoveDownLeft(0); 
- break;                
- default:
- }
- }
- }
- */
+ 
