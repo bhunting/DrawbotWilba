@@ -1,0 +1,9 @@
+On Sunday, February 16, 2014 4:02 AM, Jason Williams wrote:
+Find attached my source code.
+
+It uses the Processing language, which is ideal for this kind of project.
+
+
+On Monday, February 17, 2014 5:35 AM, Jason Williams wrote:
+I'm happy with a Creative Commons licence.
+I hereby release that source code package as Creative Commons blah blah free for anyone to use for any purposes.
