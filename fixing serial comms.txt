@@ -1,0 +1,29 @@
+
+
+how to fix:
+
+WARNING:  RXTX Version mismatch
+ Jar version = RXTX-2.2pre1
+ native lib Version = RXTX-2.2pre2
+
+
+
+*******************************************************************************************
+goto http://rxtx.qbang.org/wiki/index.php/Download 
+   and download rxtx-2.1-7-bins-r2.zip from "Binary" column.
+goto C:\Users\Downloads\rxtx-2.1-7-bins-r2.zip\rxtx-2.1-7-bins-r2 
+   and copy RXTXcomm to 
+   C:\Program Files\processing-1.5.1\java\lib\ext
+goto C:\Users\Downloads\rxtx-2.1-7-bins-r2.zip\rxtx-2.1-7-bins-r2\Windows\i368-mingw32
+   and copy both rxtxParallel.dll and rxtxSerial.dll to
+   C:\Program Files\processing-1.5.1\java\bin
+
+*******************************************************************************************
+The result:
+
+Stable Library
+=========================================
+Native lib Version = RXTX-2.1-7
+Java lib Version   = RXTX-2.1-7
+
+
