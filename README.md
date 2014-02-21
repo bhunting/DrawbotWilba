@@ -1,4 +1,8 @@
 
+Auto formatting
+
+-------
+
 Modified to remove game controller.
 Updates to support Processing 2.0.
 Requires update of controlP5 library from http://www.sojamo.de/libraries/controlP5/
