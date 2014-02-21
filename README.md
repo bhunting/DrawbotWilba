@@ -1,4 +1,11 @@
 
+Added file header w/ copyright
+Cleanup of un-needed imports
+Remove game pad controller object
+additional formatting
+
+-------
+
 Auto formatting
 
 -------

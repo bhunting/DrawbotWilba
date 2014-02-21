@@ -1,7 +1,9 @@
+
 import geomerative.*;
 
 static final float PIXELS_TO_MM = 1.0 / ( 90.0 / 25.4 );
 
+//-----------------------------------------------------------------------------
 class ShapeManager
 {
   RShape _loadedShape;
@@ -40,6 +42,7 @@ class ShapeManager
   }
 
 
+//-----------------------------------------------------------------------------
   float getPixelBrightness( PImage img, float imgScale, float x, float y )
   {
     // pre-scale co-ordinates back to pixel scale
@@ -57,6 +60,7 @@ class ShapeManager
     return value / 255.0;
   }
 
+//-----------------------------------------------------------------------------
   void rasterizeImage( PImage img, float imgScale )
   {
     PVector lineVector = new PVector( 3, -1 );
@@ -132,6 +136,7 @@ class ShapeManager
   }
 
 
+//-----------------------------------------------------------------------------
   // static
   RShape flattenShape( RShape shape )
   {
@@ -140,6 +145,7 @@ class ShapeManager
     return flattenedShape;
   }
 
+//-----------------------------------------------------------------------------
   // static
   void _flattenShape( RShape sourceShape, RShape targetShape )
   {
@@ -176,6 +182,7 @@ class ShapeManager
     }
   }
 
+//-----------------------------------------------------------------------------
   // static
   RPoint[][] getPointsInPaths( RShape shape, PVector shapeOrigin )
   {
@@ -199,6 +206,7 @@ class ShapeManager
     return null;
   }
 
+//-----------------------------------------------------------------------------
   void sortIntersections( RPoint[] intersectPoints, RPoint insertsectLineStart, RPoint insertsectLineEnd )
   {
     if (intersectPoints != null)
@@ -220,6 +228,7 @@ class ShapeManager
     }
   }
 
+//-----------------------------------------------------------------------------
   RShape getRasterLines( RShape sourceShape, PVector lineVector, float lineSeparation )
   {
     // IMPORTANT! getIntersections() uses segmented paths.
@@ -301,6 +310,7 @@ class ShapeManager
   }
 
 
+//-----------------------------------------------------------------------------
   // static
   RShape rasterizeShape( RShape sourceShape )
   {

@@ -1,16 +1,23 @@
+/*************************************************
+ * Drawbot code to drive a polar graphic plotter.
+ * MotorController is presently coded to support the
+ * EiBotBoard (EggBotBoard) from Brian Schmalz 
+ * http://www.schmalzhaus.com/EBB/
+ *
+ * Original code is from Wilba6582 (Jason Williams) and is
+ * released with the copyright
+ * "I hereby release that source code package as Creative Commons blah blah free for anyone to use for any purposes."
+ *
+ * Modifications by Brad Hunting released under a Creative Commons Attribution 4.0 International License.
+ *
+ * Released files include DrawbotWilba.pde, MotorController.pde, ShapeManager.pde
+ *
+ ************************************************/
+
 import java.awt.event.*;
-import processing.opengl.*;
-import geomerative.*;
-
 import controlP5.*;
+
 ControlP5 cp5;
-
-
-import procontroll.*;
-import net.java.games.input.*;
-ControllIO controllIO;
-ControllDevice joypad;
-
 
 PVector _screenTranslate = new PVector(0, 0);
 float _screenScale = 1;
@@ -30,12 +37,11 @@ RPoint[][] _shapePoints;
 
 PImage _image;
 float _imageScale = 1; // pixels per mm ??
-
-
 float _pageOffsetY = 0;
 PVector _pageSize = new PVector( 210, 297 ); // A4 portrait
 PVector _shapeOffset = new PVector(0, 0);
 
+//-----------------------------------------------------------------------------
 void setup()
 {
   size(900, 1000 );
@@ -51,19 +57,11 @@ void setup()
   cp5 = new ControlP5(this);
   setupGUI();
 
-
-
-
   setupGamepad();
 
-  addMouseWheelListener(new MouseWheelListener() { 
-    public void mouseWheelMoved(MouseWheelEvent mwe) { 
-      mouseWheel(mwe.getWheelRotation());
-    }
-  }
-  ); 
-
-
+  addMouseWheelListener(new MouseWheelListener() 
+                        { public void mouseWheelMoved(MouseWheelEvent mwe) 
+                             { mouseWheel(mwe.getWheelRotation()); } } ); 
 
   _screenTranslate.set( 40, 40, 0 );
   _screenScale = 0.91;
@@ -82,10 +80,7 @@ void setup()
   _shapeOffset.set( 5, 50, 0 );
 }
 
-
-
-
-
+//-----------------------------------------------------------------------------
 PVector screenToModel( PVector p )
 {
   float x = p.x;
@@ -97,6 +92,7 @@ PVector screenToModel( PVector p )
   return new PVector(x, y);
 }
 
+//-----------------------------------------------------------------------------
 PVector modelToScreen( PVector p )
 {
   float x = p.x;
@@ -108,18 +104,21 @@ PVector modelToScreen( PVector p )
   return new PVector(x, y);
 }
 
+//-----------------------------------------------------------------------------
 PVector getPageOrigin()
 {
   PVector home = _motorController.getHome();
   return new PVector( home.x - (_pageSize.x/2), home.y + _pageOffsetY );
 }
 
+//-----------------------------------------------------------------------------
 PVector getShapeOrigin()
 {
   PVector pageOrigin = getPageOrigin();
   return new PVector( pageOrigin.x + _shapeOffset.x, pageOrigin.y + _shapeOffset.y );
 }
 
+//-----------------------------------------------------------------------------
 void draw()
 {
   background(192);
@@ -268,6 +267,7 @@ void draw()
   rect( 0, height-_guiHeight, width, _guiHeight );
 }
 
+//-----------------------------------------------------------------------------
 void drawShapePoints( RPoint[][] shapePoints )
 {
   if ( shapePoints == null )
@@ -318,6 +318,7 @@ void drawShapePoints( RPoint[][] shapePoints )
   }
 }
 
+//-----------------------------------------------------------------------------
 void mousePressed()
 {
   if ( mouseY > height-_guiHeight )
@@ -340,6 +341,7 @@ void mousePressed()
   }
 }
 
+//-----------------------------------------------------------------------------
 void mouseReleased()
 {
   if ( mouseButton==LEFT && _mousePress != null )
@@ -370,6 +372,7 @@ void mouseReleased()
   _mousePress = null;
 }
 
+//-----------------------------------------------------------------------------
 void mouseDragged()
 {
   if ( _mousePress == null )
@@ -404,8 +407,7 @@ void mouseWheel(int delta)
 ///////////////////////////////////
 // Setup of GUI controls
 ///////////////////////////////////
-
-
+//-----------------------------------------------------------------------------
 void setupGUI()
 {
   PVector guiTopLeft = new PVector( 0, height - _guiHeight );
@@ -424,9 +426,6 @@ void setupGUI()
     .activateEvent(true)
       .setId(2)
         ;
-
-
-
 
   y = (int)guiTopLeft.y + 20;
   x = (int)guiTopLeft.x + 20;
@@ -563,7 +562,9 @@ void setupGUI()
             ;
 }
 
-public void controlEvent(ControlEvent theEvent) {
+//-----------------------------------------------------------------------------
+public void controlEvent(ControlEvent theEvent) 
+{
   //println("got a control event from controller with id "+theEvent.getId());
   /*  switch(theEvent.getId()) {
    case(1): // numberboxA is registered with id 1
@@ -575,12 +576,16 @@ public void controlEvent(ControlEvent theEvent) {
    }*/
 }
 
-public void ctrlMachineWidth( float theValue ) {
+//-----------------------------------------------------------------------------
+public void ctrlMachineWidth( float theValue ) 
+{
   _motorController._machineWidth = theValue;
 }
 
 
-public void btnPlot(int theValue) {
+//-----------------------------------------------------------------------------
+public void btnPlot(int theValue) 
+{
 
 
   _motorController.startPlot();
@@ -626,13 +631,17 @@ public void btnPlot(int theValue) {
   _motorController.moveToHome();
 }
 
-public void btnResumePlot(int theValue) {
+//-----------------------------------------------------------------------------
+public void btnResumePlot(int theValue) 
+{
   _motorController._resumeMode = true;
   btnPlot(0);
   _motorController._resumeMode = false;
 }
 
-public void btnPlotTime(int theValue) {
+//-----------------------------------------------------------------------------
+public void btnPlotTime(int theValue) 
+{
   _motorController.startDryRun();
   btnPlot(0);
   _motorController.endDryRun();
@@ -640,7 +649,9 @@ public void btnPlotTime(int theValue) {
 }
 
 
-public void btnPlotStipple( int theValue ) {
+//-----------------------------------------------------------------------------
+public void btnPlotStipple( int theValue ) 
+{
 
   _motorController.startPlot();
 
@@ -669,7 +680,9 @@ public void btnPlotStipple( int theValue ) {
   _motorController.moveToHome();
 }
 
-public void btnPlotStippleTime(int theValue) {
+//-----------------------------------------------------------------------------
+public void btnPlotStippleTime(int theValue) 
+{
   _motorController.startDryRun();
   btnPlotStipple(0);
   _motorController.endDryRun();
@@ -677,11 +690,15 @@ public void btnPlotStippleTime(int theValue) {
 }
 
 
-public void btnMoveToHome(int theValue) {
+//-----------------------------------------------------------------------------
+public void btnMoveToHome(int theValue) 
+{
   _motorController.moveToHome();
 }
 
-public void btnTestPattern0(int theValue) {
+//-----------------------------------------------------------------------------
+public void btnTestPattern0(int theValue) 
+{
 
 
   float homeX = _motorController.getHome().x;
@@ -697,7 +714,9 @@ public void btnTestPattern0(int theValue) {
   _motorController.moveToHome();
 }
 
-public void btnTestPattern(int theValue) {
+//-----------------------------------------------------------------------------
+public void btnTestPattern(int theValue) 
+{
 
 
   float homeX = _motorController.getHome().x;
@@ -738,7 +757,10 @@ public void btnTestPattern(int theValue) {
   }
   _motorController.moveToHome();
 }
-public void btnTestPattern2(int theValue) {
+
+//-----------------------------------------------------------------------------
+public void btnTestPattern2(int theValue) 
+{
 
 
   float x = _motorController.getHome().x+00;
@@ -759,40 +781,70 @@ public void btnTestPattern2(int theValue) {
   _motorController.penUp();
   _motorController.moveToHome();
 }
-public void btnPenUp(int theValue) {     
+
+//-----------------------------------------------------------------------------
+public void btnPenUp(int theValue) 
+{     
   _motorController.penUp();
 }
-public void btnPenDown(int theValue) {     
+
+//-----------------------------------------------------------------------------
+public void btnPenDown(int theValue) 
+{     
   _motorController.penDown();
 }
 
-public void btnMoveUpLeft(int theValue) {
+//-----------------------------------------------------------------------------
+public void btnMoveUpLeft(int theValue) 
+{
   println("btnMoveUpLeft");
   _motorController.setupMoveMotors( -1, 0 );
 }
-public void btnMoveUp(int theValue) {
+
+//-----------------------------------------------------------------------------
+public void btnMoveUp(int theValue) 
+{
   _motorController.setupMoveMotors( -1, -1 );
 }
-public void btnMoveUpRight(int theValue) {
+
+//-----------------------------------------------------------------------------
+public void btnMoveUpRight(int theValue) 
+{
   _motorController.setupMoveMotors( 0, -1 );
 }
-public void btnMoveLeft(int theValue) {
+
+//-----------------------------------------------------------------------------
+public void btnMoveLeft(int theValue) 
+{
   _motorController.setupMoveMotors( -1, 1 );
 }
-public void btnMoveRight(int theValue) {
+
+//-----------------------------------------------------------------------------
+public void btnMoveRight(int theValue) 
+{
   _motorController.setupMoveMotors( 1, -1 );
 }
-public void btnMoveDownLeft(int theValue) {
+
+//-----------------------------------------------------------------------------
+public void btnMoveDownLeft(int theValue) 
+{
   _motorController.setupMoveMotors( 0, 1 );
 }
-public void btnMoveDown(int theValue) {
+
+//-----------------------------------------------------------------------------
+public void btnMoveDown(int theValue) 
+{
   _motorController.setupMoveMotors( 1, 1 );
 }
-public void btnMoveDownRight(int theValue) {
+
+//-----------------------------------------------------------------------------
+public void btnMoveDownRight(int theValue) 
+{
   _motorController.setupMoveMotors( 1, 0 );
 }
 
 
+//-----------------------------------------------------------------------------
 void printDryRunStats()
 {
   println( "pen up distance = " + _motorController._statsPenUpDistance + " mm");
@@ -803,6 +855,7 @@ void printDryRunStats()
 }
 
 
+//-----------------------------------------------------------------------------
 void setupGamepad()
 {
   /*
@@ -819,24 +872,44 @@ void setupGamepad()
    */
 }     
 
-void onGamepadL1ButtonPress() {
+//-----------------------------------------------------------------------------
+void onGamepadL1ButtonPress() 
+{
   _motorController.setSetupMoveMotorStepSize( 3200.0 );
 }
-void onGamepadL1ButtonRelease() {
+
+//-----------------------------------------------------------------------------
+void onGamepadL1ButtonRelease() 
+{
   _motorController.setSetupMoveMotorStepSize( 16.0 );
 }
-void onGamepadL2ButtonPress() {
+
+//-----------------------------------------------------------------------------
+void onGamepadL2ButtonPress() 
+{
   _motorController.penDown();
 }
-void onGamepadL2ButtonRelease() {
+
+//-----------------------------------------------------------------------------
+void onGamepadL2ButtonRelease() 
+{
   _motorController.penUp();
 }
-void onGamepadDpadPress(final float x, final float y) {
+
+//-----------------------------------------------------------------------------
+void onGamepadDpadPress(final float x, final float y) 
+{
 }
-void onGamepadDpadRelease(final float x, final float y) {
+
+//-----------------------------------------------------------------------------
+void onGamepadDpadRelease(final float x, final float y) 
+{
   onGamepadDpadMovement( x, y );
 }
-void onGamepadDpadMovement(final float x, final float y) {
+
+//-----------------------------------------------------------------------------
+void onGamepadDpadMovement(final float x, final float y) 
+{
   /*
     if ( x<0 && y<0 ) _motorController.setupMoveMotors( -1, 0 );
    else if ( x==0 && y<0 ) _motorController.setupMoveMotors( -1, -1 );
@@ -850,4 +923,5 @@ void onGamepadDpadMovement(final float x, final float y) {
    else if ( x>0 && y>0 ) _motorController.setupMoveMotors( 1, 0 );
    */
 }
+
 

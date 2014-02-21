@@ -1,7 +1,9 @@
+
 import processing.serial.*;
 
 static final int SM_CMD_MAX_STEPS = 32000; // really 32767
 
+//-----------------------------------------------------------------------------
 class MotorController
 {
   Serial _port;
@@ -65,6 +67,7 @@ class MotorController
   int _preDryRun_deltaStepsB;
   int _preDryRun_penState;
 
+//-----------------------------------------------------------------------------
   MotorController( PApplet applet, String portName )
   {
 
@@ -89,6 +92,7 @@ class MotorController
     setHome( 250.0 - 21.5 );
   }
 
+//-----------------------------------------------------------------------------
   void startDryRun()
   {
     _dryRun = true;
@@ -104,6 +108,7 @@ class MotorController
     _statsPenDownDistance = 0;
   }
 
+//-----------------------------------------------------------------------------
   void endDryRun()
   {
     _dryRun = false;
@@ -115,6 +120,7 @@ class MotorController
     _penState = _preDryRun_penState;
   }
 
+//-----------------------------------------------------------------------------
   void startPlot()
   {
     if ( ! _dryRun )
@@ -128,6 +134,7 @@ class MotorController
     // _resumeMode might be true or false
   }
 
+//-----------------------------------------------------------------------------
   void endPlot()
   {
     _plotMode = false;
@@ -136,6 +143,7 @@ class MotorController
     _resumeMode = false;
   }
 
+//-----------------------------------------------------------------------------
   float XYtoLength( float x, float y, float w, float r )
   {
     //println("XYtoLength("+x+","+y+","+w+","+r+")");
@@ -150,6 +158,7 @@ class MotorController
     return m + n;
   }
 
+//-----------------------------------------------------------------------------
   PVector XYtoAB( PVector p )
   {
     if ( _useSmartGeometry )
@@ -184,6 +193,7 @@ class MotorController
     }
   }
 
+//-----------------------------------------------------------------------------
   PVector ABtoXY( PVector p )
   {
     float a = p.x;
@@ -196,6 +206,7 @@ class MotorController
     return new PVector( x + _penOffsetX, y + _penOffsetY );
   }
 
+//-----------------------------------------------------------------------------
   void _delay( int duration )
   {
     try
@@ -206,6 +217,7 @@ class MotorController
     }
   }
 
+//-----------------------------------------------------------------------------
   String sendCommand( String command )
   {
     if ( _dryRun )
@@ -244,6 +256,7 @@ class MotorController
     return response;
   }
 
+//-----------------------------------------------------------------------------
   void queryButton()
   {
     if ( _dryRun )
@@ -261,6 +274,7 @@ class MotorController
     }
   }
 
+//-----------------------------------------------------------------------------
   void setServoSettings()
   {
     // NOTE: EBB command doco reads: "SC,4,<servo_min>" and "SC,5,<servo_max>" 
@@ -274,11 +288,13 @@ class MotorController
     sendCommand( "SC,12," + _servoRateDown + "\r");
   }
 
+//-----------------------------------------------------------------------------
   PVector getHome()
   {
     return new PVector( _machineWidth/2, _homePosY );
   }
 
+//-----------------------------------------------------------------------------
   void setHome( float y )
   {
     _homePosY = y;
@@ -292,12 +308,14 @@ class MotorController
     _deltaStepsB = 0;
   }
 
+//-----------------------------------------------------------------------------
   PVector getCurrentAB()
   {
     return new PVector( _homeAB.x + ( _deltaStepsA * ( _gearCircumference / _motorStepsPerRev ) ), 
     _homeAB.y + ( _deltaStepsB * ( _gearCircumference / _motorStepsPerRev ) ), 0 );
   }
 
+//-----------------------------------------------------------------------------
   // The calculated position of the pen based on changed line lengths
   // which were rounded to nearest step.
   PVector getCurrentXY()
@@ -312,6 +330,7 @@ class MotorController
     }
   }
 
+//-----------------------------------------------------------------------------
   void penUp()
   {
     if ( _stopped || _resumeMode )
@@ -333,6 +352,7 @@ class MotorController
     }
   }
 
+//-----------------------------------------------------------------------------
   void penDown()
   {
     if ( _stopped || _resumeMode )
@@ -354,6 +374,7 @@ class MotorController
     }
   }
 
+//-----------------------------------------------------------------------------
   void delayMotors( int duration )
   {
     // Code copied from EggBot Inkscape plugin.
@@ -368,11 +389,13 @@ class MotorController
   }
 
 
+//-----------------------------------------------------------------------------
   void lineTo( float x, float y )
   {
     lineTo( new PVector( x, y ) );
   }
 
+//-----------------------------------------------------------------------------
   void lineTo( PVector pt )
   {
     // inelegant first draft
@@ -399,16 +422,19 @@ class MotorController
     }
   }
 
+//-----------------------------------------------------------------------------
   void moveToHome()
   {
     moveTo( getHome() );
   }
 
+//-----------------------------------------------------------------------------
   void moveTo( float x, float y )
   {
     moveTo( new PVector( x, y ) );
   }
 
+//-----------------------------------------------------------------------------
   void moveTo( PVector pt )
   {
     if ( _stopped )
@@ -482,11 +508,13 @@ class MotorController
     }
   }
 
+//-----------------------------------------------------------------------------
   void setSetupMoveMotorStepSize( float setupMoveMotorsStepSize )
   {
     _setupMoveMotorsStepSize = setupMoveMotorsStepSize;
   }
 
+//-----------------------------------------------------------------------------
   void setupMoveMotors( float directionA, float directionB )
   {
     // HACK: args in steps, convert to distance
@@ -502,6 +530,7 @@ class MotorController
     moveMotors( stepsA, stepsB, duration, /*updateDeltaSteps=*/ false );
   }
 
+//-----------------------------------------------------------------------------
   // this handles steps greater than the maximum steps per motor move command.
   // also will do nothing if both step values are zero
   void moveMotors( int stepsA, int stepsB, int duration, boolean updateDeltaSteps )
@@ -551,7 +580,7 @@ class MotorController
     }
   }
 
-
+//-----------------------------------------------------------------------------
   void circle( PVector pt, float radius )
   {
     float segmentLength = 1.0;
@@ -582,6 +611,7 @@ class MotorController
     }
   }
 
+//-----------------------------------------------------------------------------
   void fillCircle( PVector pt, float radius, float penWidth )
   {
     float r = radius;
