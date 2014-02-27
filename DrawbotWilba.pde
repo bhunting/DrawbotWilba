@@ -76,6 +76,7 @@ void setup()
 
   _image = loadImage( "freckles.jpg" );
   _imageScale = 0.195;
+  //_imageScale = 0.5;
   _shapeManager.rasterizeImage( _image, _imageScale );
   _shapeOffset.set( 5, 50, 0 );
 }
@@ -432,46 +433,40 @@ void setupGUI()
 
   cp5.addButton("btnPlot")
     .setPosition(x, y)
-      .setSize(60, 20)
+      .setSize(80, 20)
         .setCaptionLabel("Plot")
           ;   
 
   cp5.addButton("btnPlotTime")
     .setPosition(x, y+20)
-      .setSize(60, 20)
+      .setSize(80, 20)
         .setCaptionLabel("Plot Time")
           ;   
   cp5.addButton("btnResumePlot")
     .setPosition(x, y+40)
-      .setSize(60, 20)
+      .setSize(80, 20)
         .setCaptionLabel("Resume Plot")
           ;                          
   cp5.addButton("btnPlotStipple")
     .setPosition(x, y+60)
-      .setSize(60, 20)
+      .setSize(80, 20)
         .setCaptionLabel("Plot Stipple")
           ;                          
 
   cp5.addButton("btnPlotStippleTime")
     .setPosition(x, y+80)
-      .setSize(60, 20)
+      .setSize(80, 20)
         .setCaptionLabel("Plot Stipple Time")
           ;                           
 
-  /*  
-   cp5.addNumberbox("ctrlMotorSpeedPenUp", _motorController._motorSpeedPenUp, x, y+0*20, 100, 14)
-   .setId(3);
-   cp5.addNumberbox("ctrlMotorSpeedPenDown", _motorController._motorSpeedPenDown, x, y+1*20, 100, 14)
-   .setId(4);  
-   cp5.addNumberbox("ctrlServoPosUp", _motorController._servoPosUp, x, y+2*20, 100, 14)
-   .setId(5);         
-   cp5.addNumberbox("ctrlServoPosDown", _motorController._servoPosDown, x, y+3*20, 100, 14)
-   .setId(6);        
-   cp5.addNumberbox("ctrlServoRateDown", _motorController._servoRateDown, x, y+4*20, 100, 14)
-   .setId(7);         
-   cp5.addNumberbox("ctrlServoRateUp", _motorController._servoRateUp, x, y+5*20, 100, 14)
-   .setId(8);         
-   */
+    
+   cp5.addNumberbox("ctrlMotorSpeedPenUp",   _motorController._motorSpeedPenUp,   x+120, y+0*20, 100, 14).setId(3).setRange(0,200).setMultiplier(1).setDirection(Controller.HORIZONTAL);
+   cp5.addNumberbox("ctrlMotorSpeedPenDown", _motorController._motorSpeedPenDown, x+120, y+2*20, 100, 14).setId(4).setRange(0,200).setMultiplier(1).setDirection(Controller.HORIZONTAL);  
+   cp5.addNumberbox("ctrlServoPosUp",        _motorController._servoPosUp,        x+120, y+4*20, 100, 14).setId(5).setRange(0,200).setMultiplier(1).setDirection(Controller.HORIZONTAL);         
+   cp5.addNumberbox("ctrlServoPosDown",      _motorController._servoPosDown,      x+300, y+0*20, 100, 14).setId(6).setRange(0,200).setMultiplier(1).setDirection(Controller.HORIZONTAL);        
+   cp5.addNumberbox("ctrlServoRateDown",     _motorController._servoRateDown,     x+300, y+2*20, 100, 14).setId(7).setRange(0,200).setMultiplier(1).setDirection(Controller.HORIZONTAL);         
+   cp5.addNumberbox("ctrlServoRateUp",       _motorController._servoRateUp,       x+300, y+4*20, 100, 14).setId(8).setRange(0,200).setMultiplier(1).setDirection(Controller.HORIZONTAL);         
+   
 
   cp5.addButton("btnMoveToHome")
     .setPosition(x, y)
@@ -566,14 +561,20 @@ void setupGUI()
 public void controlEvent(ControlEvent theEvent) 
 {
   //println("got a control event from controller with id "+theEvent.getId());
-  /*  switch(theEvent.getId()) {
-   case(1): // numberboxA is registered with id 1
-   myColorRect = (int)(theEvent.getController().getValue());
-   break;
-   case(2):  // numberboxB is registered with id 2
-   myColorBackground = (int)(theEvent.getController().getValue());
-   break;
-   }*/
+   switch(theEvent.getId()) 
+   {
+     case(1): // numberboxA is registered with id 1
+       //myColorRect = (int)(theEvent.getController().getValue());
+       println("EVENT 1");
+       break;
+     case(2):  // numberboxB is registered with id 2
+       //myColorBackground = (int)(theEvent.getController().getValue());
+       println("EVENT 2");
+       break;
+     default:
+       println("EVENT " + theEvent.getId());
+       break;
+   }
 }
 
 //-----------------------------------------------------------------------------
@@ -586,10 +587,7 @@ public void ctrlMachineWidth( float theValue )
 //-----------------------------------------------------------------------------
 public void btnPlot(int theValue) 
 {
-
-
   _motorController.startPlot();
-
 
   RPoint[][] shapePoints = _shapeManager.getPointsInPaths( _shapeManager.getPlotShape(), getShapeOrigin() );
 

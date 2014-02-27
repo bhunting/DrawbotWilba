@@ -70,11 +70,9 @@ class MotorController
 //-----------------------------------------------------------------------------
   MotorController( PApplet applet, String portName )
   {
-
-
     // Can't work out how to get error result from Serial.
     // Only open portName if it is in the list of ports.
-    for ( int i=0; i<Serial.list().length; i++ )
+    for( int i = 0; i < Serial.list().length; i++ )
     {
       println(Serial.list()[i]);
       if ( Serial.list()[i].equals( portName ) )
@@ -144,6 +142,12 @@ class MotorController
   }
 
 //-----------------------------------------------------------------------------
+// return m + n
+// m = sqrt( x^2 + y^2 - r^2 )
+// n = r * ( PI - arcsin( x / sqrt( x^2 + y^2 ) ) - arcsin( sqrt( x^2 + y^2 - r^2 ) / sqrt( x^2 + y^2 ) ) )
+//
+// return( sqrt(x^2+y^2) + r*(PI-asin(x/sqrt(x^2+y^2))-asin(sqrt(x^2+y^2-r^2)/sqrt(x^2+y^2))) )
+//
   float XYtoLength( float x, float y, float w, float r )
   {
     //println("XYtoLength("+x+","+y+","+w+","+r+")");
@@ -159,6 +163,8 @@ class MotorController
   }
 
 //-----------------------------------------------------------------------------
+// Assumes string runs over the outside of the spools
+// 
   PVector XYtoAB( PVector p )
   {
     if ( _useSmartGeometry )
@@ -213,11 +219,20 @@ class MotorController
     {
       Thread.sleep(duration);
     }
-    catch (InterruptedException e) {
+    catch (InterruptedException e) 
+    {
     }
   }
 
 //-----------------------------------------------------------------------------
+// Send the command string to the control board.
+// Assumption is command is in the format required for the controller.
+// For the EggBotBoard the commands must end with a LF+CR or a
+// combination of either or both.
+// Try to read response up to 20 times, delaying 50 Xsec between each check.
+// Look for a trailing newline to indicate response received.
+// Compare the response to OK and return ??? on success
+// Return ??? on failure
   String sendCommand( String command )
   {
     if ( _dryRun )
@@ -257,6 +272,7 @@ class MotorController
   }
 
 //-----------------------------------------------------------------------------
+// Query the push button on the eggbot board.
   void queryButton()
   {
     if ( _dryRun )
@@ -275,6 +291,12 @@ class MotorController
   }
 
 //-----------------------------------------------------------------------------
+// Settings for the Pen Servo.
+// Set servo control values (pulse width) for the servo up and down positions.
+// The servo rate up and down settings control how much the servo position
+// is modified each pass through the servo update internal to the eggbot.
+// The default settings for the eggbot board are 8 servo channels each updated
+// at 3 msecs per channel, or 24 msec for a full loop through all 8 channels.
   void setServoSettings()
   {
     // NOTE: EBB command doco reads: "SC,4,<servo_min>" and "SC,5,<servo_max>" 
@@ -331,6 +353,12 @@ class MotorController
   }
 
 //-----------------------------------------------------------------------------
+// Send the pen servo move command.  
+// Delay any new commands until at least a calculated delay.
+// Calculate delay based on servo range divided by servo rate.
+// The * 24 is for the 3 msec / channel times 8 channels = 24 msec
+// ??? Why multiply by the 24 msec?  Because the servo rate is per
+// channel ??
   void penUp()
   {
     if ( _stopped || _resumeMode )
@@ -353,6 +381,12 @@ class MotorController
   }
 
 //-----------------------------------------------------------------------------
+// Send the pen servo move command.  
+// Delay any new commands until at least a calculated delay.
+// Calculate delay based on servo range divided by servo rate.
+// The * 24 is for the 3 msec / channel times 8 channels = 24 msec
+// ??? Why multiply by the 24 msec?  Because the servo rate is per
+// channel ??
   void penDown()
   {
     if ( _stopped || _resumeMode )
@@ -375,6 +409,10 @@ class MotorController
   }
 
 //-----------------------------------------------------------------------------
+// Tell the eggbot board to not initiate the next command 
+// until after delay has elapsed.
+// The SM (stepper move) command with 0 for x and y just delays the next
+// command for duration.
   void delayMotors( int duration )
   {
     // Code copied from EggBot Inkscape plugin.
@@ -396,6 +434,9 @@ class MotorController
   }
 
 //-----------------------------------------------------------------------------
+// Move the pen in a line made up of N segments
+// Does not manipulate the pen, pen must be in the correct state, up or down,
+// before the line drawn (or not drawn).
   void lineTo( PVector pt )
   {
     // inelegant first draft
@@ -413,10 +454,11 @@ class MotorController
 
     for ( int i=1; i<=steps; i++ )
     {
-      float t = (float)i / (float)steps;
+      float amt = (float)i / (float)steps;
 
-      float x = lerp( startPt.x, endPt.x, t );
-      float y = lerp( startPt.y, endPt.y, t );
+      // linear interpolation between start and end points
+      float x = lerp( startPt.x, endPt.x, amt );
+      float y = lerp( startPt.y, endPt.y, amt );
 
       moveTo( x, y );
     }
@@ -581,16 +623,23 @@ class MotorController
   }
 
 //-----------------------------------------------------------------------------
+// Draw a circle by drawing multiple straight line segments.
+// Assumes this function is called with the pen up.
+// Input the center and radius of the circle.
   void circle( PVector pt, float radius )
   {
     float segmentLength = 1.0;
     float circumference = PI * 2.0 * radius;
     int steps = ceil( circumference / segmentLength ); // round up
+    
+    // use a minimum of 8 line segments to make the circle
     if ( steps < 8 )
     {
       steps = 8;
     }
 
+    // if the radius is 0 or smaller just move the
+    // pen to the center point and drop the pen
     if ( radius <= 0 )
     {
       moveTo( pt.x, pt.y );
@@ -598,13 +647,25 @@ class MotorController
     }
     else
     {
+      // run the for loop for <= to steps to get the starting
+      // point at zero angle and then get all of the rest of the steps
+      // around the circle.
       for ( int i=0; i<=steps; i++ )
       {
-        float t = (float)i / (float)steps * 2.0 * PI;
+        // divide a circle (2*PI) by the number of steps
+        // and get each angle around the circle
+        float angle = ((float)i / (float)steps) * 2.0 * PI;
 
-        float x = pt.x + cos( t ) * radius;
-        float y = pt.y - sin( t ) * radius;
+        // calculate the x,y position of the point
+        // to move to.  First calculated point is with
+        // i = 0 so the angle will be zero.
+        // Start the circle at radius r and angle 0
+        float x = pt.x + cos( angle ) * radius;
+        float y = pt.y - sin( angle ) * radius;
 
+        // move to the newly calculated point
+        // The first point is at angle 0
+        // move to radius r at angle 0 and drop the pen 
         moveTo( x, y );
         penDown();
       }
@@ -612,15 +673,18 @@ class MotorController
   }
 
 //-----------------------------------------------------------------------------
+// Draw a filled circle by drawing repeated cicles within cicles
+// each cicle is smaller than the previous by penWidth
+// Input the center and radius of the circle.
   void fillCircle( PVector pt, float radius, float penWidth )
   {
     float r = radius;
     while ( r >= 0 )
     {
-      circle( pt, r );
+      circle( pt, r ); // draw a cicle
       r -= penWidth;
     }
-    moveTo( pt.x, pt.y );
+    moveTo( pt.x, pt.y ); // move to the center of the circle
   }
 }
 

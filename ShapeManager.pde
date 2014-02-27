@@ -69,7 +69,6 @@ class ShapeManager
     float segmentWidth = 0.3;
     float segmentHeight = 2.0;
 
-
     _plotShape = new RShape();
 
     float imgWidth = img.width * imgScale;
@@ -127,8 +126,6 @@ class ShapeManager
 
       rasterLines2.addChild( RG.getShape() );
     }
-
-
 
     //_plotShape.addChild( outlineShape );
     //_plotShape.addChild( rasterLines );
@@ -343,7 +340,6 @@ class ShapeManager
         float y = lerp( y0, y1, (float)j / (float)steps );
         RShape cuttingLine = RG.getLine( x0, y, x1, y );
         float lineLength = dist( x0, y, x1, y );
-
 
         RPoint[] ps = shp.getIntersections(cuttingLine);
         if (ps != null)
