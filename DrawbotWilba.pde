@@ -18,6 +18,8 @@ import java.awt.event.*;
 import controlP5.*;
 
 ControlP5 cp5;
+Textarea debugTextarea;
+Println debugConsole;
 
 PVector _screenTranslate = new PVector(0, 0);
 float _screenScale = 1;
@@ -51,12 +53,13 @@ void setup()
 
   // Create MotorController before GUI
   // then controls can be init with values
-  _motorController = new MotorController(this, "COM4");
-
+  _motorController = new MotorController(this);
 
   cp5 = new ControlP5(this);
+  cp5.enableShortcuts();
   setupGUI();
 
+  _motorController.init("COM20");
   setupGamepad();
 
   addMouseWheelListener(new MouseWheelListener() 
@@ -428,6 +431,11 @@ void setupGUI()
       .setId(2)
         ;
 
+  cp5.addTab("debug")
+    .activateEvent(true)
+      .setId(3)
+        ;
+
   y = (int)guiTopLeft.y + 20;
   x = (int)guiTopLeft.x + 20;
 
@@ -459,15 +467,6 @@ void setupGUI()
         .setCaptionLabel("Plot Stipple Time")
           ;                           
 
-    
-   cp5.addNumberbox("ctrlMotorSpeedPenUp",   _motorController._motorSpeedPenUp,   x+120, y+0*20, 100, 14).setId(3).setRange(0,200).setMultiplier(1).setDirection(Controller.HORIZONTAL);
-   cp5.addNumberbox("ctrlMotorSpeedPenDown", _motorController._motorSpeedPenDown, x+120, y+2*20, 100, 14).setId(4).setRange(0,200).setMultiplier(1).setDirection(Controller.HORIZONTAL);  
-   cp5.addNumberbox("ctrlServoPosUp",        _motorController._servoPosUp,        x+120, y+4*20, 100, 14).setId(5).setRange(0,200).setMultiplier(1).setDirection(Controller.HORIZONTAL);         
-   cp5.addNumberbox("ctrlServoPosDown",      _motorController._servoPosDown,      x+300, y+0*20, 100, 14).setId(6).setRange(0,200).setMultiplier(1).setDirection(Controller.HORIZONTAL);        
-   cp5.addNumberbox("ctrlServoRateDown",     _motorController._servoRateDown,     x+300, y+2*20, 100, 14).setId(7).setRange(0,200).setMultiplier(1).setDirection(Controller.HORIZONTAL);         
-   cp5.addNumberbox("ctrlServoRateUp",       _motorController._servoRateUp,       x+300, y+4*20, 100, 14).setId(8).setRange(0,200).setMultiplier(1).setDirection(Controller.HORIZONTAL);         
-   
-
   cp5.addButton("btnMoveToHome")
     .setPosition(x, y)
       .setSize(60, 20)
@@ -493,6 +492,26 @@ void setupGUI()
         .setCaptionLabel("Pen Down")
           .moveTo("motor_setup")
             ;   
+  cp5.addButton("btnVersion")
+    .setPosition(x, y+100)
+      .setSize(60, 20)
+        .setCaptionLabel("Version")
+          .moveTo("motor_setup")
+            ;   
+
+  cp5.addButton("btnQueryButton")
+    .setPosition(x, y+120)
+      .setSize(60, 20)
+        .setCaptionLabel("QueryBtn")
+          .moveTo("motor_setup")
+            ;   
+
+   cp5.addNumberbox("ctrlMotorSpeedPenUp",   _motorController._motorSpeedPenUp,   x+120, y+0*20, 100, 14).setId(3).setRange(0,200).setMultiplier(1).setDirection(Controller.HORIZONTAL).moveTo("motor_setup");
+   cp5.addNumberbox("ctrlMotorSpeedPenDown", _motorController._motorSpeedPenDown, x+120, y+2*20, 100, 14).setId(4).setRange(0,200).setMultiplier(1).setDirection(Controller.HORIZONTAL).moveTo("motor_setup");  
+   cp5.addNumberbox("ctrlServoPosUp",        _motorController._servoPosUp,        x+120, y+4*20, 100, 14).setId(5).setRange(0,200).setMultiplier(1).setDirection(Controller.HORIZONTAL).moveTo("motor_setup");         
+   cp5.addNumberbox("ctrlServoPosDown",      _motorController._servoPosDown,      x+300, y+0*20, 100, 14).setId(6).setRange(0,200).setMultiplier(1).setDirection(Controller.HORIZONTAL).moveTo("motor_setup");        
+   cp5.addNumberbox("ctrlServoRateDown",     _motorController._servoRateDown,     x+300, y+2*20, 100, 14).setId(7).setRange(0,200).setMultiplier(1).setDirection(Controller.HORIZONTAL).moveTo("motor_setup");         
+   cp5.addNumberbox("ctrlServoRateUp",       _motorController._servoRateUp,       x+300, y+4*20, 100, 14).setId(8).setRange(0,200).setMultiplier(1).setDirection(Controller.HORIZONTAL).moveTo("motor_setup");         
 
   x = (int)guiTopLeft.x + 600;
   int buttonSize = 40;
@@ -555,6 +574,19 @@ void setupGUI()
         .setCaptionLabel("\\")
           .moveTo("motor_setup")
             ;
+            
+  debugTextarea = cp5.addTextarea("debugtext")
+                  .setPosition(100, 100)
+                  .setSize(200, 200)
+                  .setFont(createFont("", 10))
+                  .setLineHeight(14)
+                  .setColor(color(200))
+                  .setColorBackground(color(0, 100))
+                  .setColorForeground(color(255, 100))
+                  .moveTo("motor_setup");
+
+  //debugConsole = cp5.addConsole(debugTextarea);//
+              
 }
 
 //-----------------------------------------------------------------------------
@@ -565,14 +597,14 @@ public void controlEvent(ControlEvent theEvent)
    {
      case(1): // numberboxA is registered with id 1
        //myColorRect = (int)(theEvent.getController().getValue());
-       println("EVENT 1");
+       //println("EVENT 1");
        break;
      case(2):  // numberboxB is registered with id 2
        //myColorBackground = (int)(theEvent.getController().getValue());
-       println("EVENT 2");
+       //println("EVENT 2");
        break;
      default:
-       println("EVENT " + theEvent.getId());
+       //println("EVENT " + theEvent.getId());
        break;
    }
 }
@@ -839,6 +871,20 @@ public void btnMoveDown(int theValue)
 public void btnMoveDownRight(int theValue) 
 {
   _motorController.setupMoveMotors( 1, 0 );
+}
+
+//-----------------------------------------------------------------------------
+public void btnVersion(int theValue) 
+{
+   debugTextarea.show();
+  _motorController.sendCommand("V\r");
+}
+
+//-----------------------------------------------------------------------------
+public void btnQueryButton(int theValue) 
+{
+   debugTextarea.hide();
+  _motorController.sendCommand("QB\r");
 }
 
 
