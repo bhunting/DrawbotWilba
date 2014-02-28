@@ -26,5 +26,7 @@ This code works as shown in video https://www.youtube.com/watch?v=O7J0FbKcCjw
 Original code will be the initial commit then future commits will be modifications
 to support Processing 2.0.
 
+Some insight to the math used can be found at
+http://forums.xkcd.com/viewtopic.php?f=17&t=100868
 
 
